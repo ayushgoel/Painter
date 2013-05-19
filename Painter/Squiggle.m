@@ -12,23 +12,23 @@
 @implementation Squiggle
 
 // generate set and get methods
-@synthesize strokeColor;
-@synthesize lineWidth;
-@synthesize points;
+@synthesize strokeColor = _strokeColor;
+@synthesize lineWidth = _lineWidth;
+@synthesize points = _points;
 
 // initialize the Squiggle object
 - (id)init {
   if (self = [super init]){
-    points = [[NSMutableArray alloc]init];
-    strokeColor = [[UIColor blackColor] retain];
+    self.points = [[[NSMutableArray alloc] init] autorelease];
+    self.strokeColor = [UIColor blackColor];
   }
   return self;
 }
 
 // release Squiggle's memory
 - (void) dealloc {
-  [strokeColor release];
-  [points release];
+  self.strokeColor = nil;
+  self.points = nil;
   [super dealloc];
 }
 
@@ -37,7 +37,7 @@
 - (void)addPoint:(CGPoint)point {
   // encode the point in an NSValue so we can put it in an NSArray
   NSValue *value = [NSValue valueWithBytes:&point objCType:@encode(CGPoint)];
-  [points addObject:value];
+  [self.points addObject:value];
 }
 
 @end

@@ -19,19 +19,17 @@
 #import <Foundation/Foundation.h>
 
 
-@interface Squiggle : NSObject {
-  
-  NSMutableArray *points;	// the points that make up the Squiggle
-  UIColor *strokeColor;	// the color of this Squiggle
-  float lineWidth;	//	the line width for this Squiggle
-  
-  // end instance variable declartion
-}
+@interface Squiggle : NSObject
 
 // declare strokeColor, lineWidth and points as properties
+
+// the color of this Squiggle
 @property (retain) UIColor* strokeColor;
+//	the line width for this Squiggle
 @property (assign) float lineWidth;
-@property (nonatomic, readonly) NSMutableArray *points;
+// the points that make up the Squiggle
+@property (nonatomic, retain) NSMutableArray *points;
 
 - (void)addPoint:(CGPoint)point;	// adds a new point to the Suiggle
+
 @end

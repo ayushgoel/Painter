@@ -8,28 +8,38 @@
 
 #import "MainView.h"
 
-@implementation MainView
+@interface MainView ()
+@property (nonatomic, retain) NSMutableDictionary *squiggles;	// sguiggles in progress
+@property (nonatomic, retain) NSMutableArray *finishedSquiggles;	// finished squiggles
 
-@synthesize color;
-@synthesize lineWidth;
+@end
+
+@implementation MainView
+@synthesize color = color_;
+@synthesize lineWidth = lineWidth_;
+@synthesize squiggles = squiggles_;
+@synthesize finishedSquiggles = finishedSquiggles_;
+
+- (void)commonInitializer {
+  // initialize squiggles and finishedSquiggles
+  self.squiggles = [[[NSMutableDictionary alloc] init] autorelease];
+  self.finishedSquiggles = [[[NSMutableArray alloc] init] autorelease];
+  // the starting color is black
+  self.color = [UIColor colorWithRed:0 green:0 blue:0 alpha:1];
+  self.lineWidth = 5;
+}
 
 - (id) initWithCoder:(NSCoder *)aDecoder {
   if (self = [super initWithCoder:aDecoder]) {
-    // initialize squiggles and finishedSquiggles
-    squiggles = [[NSMutableDictionary alloc] init];
-    finishedSquiggles = [[NSMutableArray alloc] init];
-    // the starting color is black
-    color = [[UIColor alloc] initWithRed:0 green:0 blue:0 alpha:1];
-    lineWidth = 5;
+    [self commonInitializer];
   }
   return self;
 }
 
 - (id)initWithFrame:(CGRect)frame {
-  
   self = [super initWithFrame:frame];
   if (self) {
-    // Initialization code.
+    [self commonInitializer];
   }
   return self;
 }
@@ -40,11 +50,11 @@
   // Drawing code.
   CGContextRef context = UIGraphicsGetCurrentContext();
   
-  for (Squiggle *squiggle in finishedSquiggles)
+  for (Squiggle *squiggle in self.finishedSquiggles)
     [self drawSquiggle:squiggle inContext:context];
-  
-  for (NSString *key in squiggles) {
-    Squiggle *squiggle = [squiggles valueForKey:key];
+
+  for (NSString *key in self.squiggles) {
+    Squiggle *squiggle = [self.squiggles valueForKey:key];
     [self drawSquiggle:squiggle inContext:context];
   }
 }
@@ -93,10 +103,10 @@
     NSValue *touchValue = [NSValue valueWithPointer:touch];
     NSString *key = [NSString stringWithFormat:@"%@", touchValue];
     // retrieve the squiggle for this touch using the key
-    Squiggle *squiggle = [squiggles valueForKey:key];
+    Squiggle *squiggle = [self.squiggles valueForKey:key];
     // remove the squiggle from the dictionary and place it in an array // of finished squiggles [finishedSquiggles addObject:squiggle]; // add to finishedSquiggles [squiggles removeObjectForKey:key]; // remove from squiggles
-    [finishedSquiggles addObject:squiggle]; // add to finishedSquiggles 
-    [squiggles removeObjectForKey:key]; // remove from squiggles
+    [self.finishedSquiggles addObject:squiggle]; // add to finishedSquiggles
+    [self.squiggles removeObjectForKey:key]; // remove from squiggles
   }//endfor
 }
 
@@ -134,8 +144,8 @@
   for (UITouch *touch in array ) {
     // create and configure a new squiggle
     Squiggle *squiggle = [[Squiggle alloc] init];
-    [squiggle setStrokeColor:color];	// set squiggle's stroke color
-    [squiggle setLineWidth:lineWidth];	// set squiggle's line width
+    [squiggle setStrokeColor:self.color];	// set squiggle's stroke color
+    [squiggle setLineWidth:self.lineWidth];	// set squiggle's line width
     
     // add the location of the first touch to the squiggle
     //[squiggle addPoint:[touch locationInView:self]];
@@ -145,7 +155,7 @@
     NSString *key = [NSString stringWithFormat:@"%@", touchValue];
     
     // add the new touch to the dictionary under a unique key
-    [squiggles setValue:squiggle forKey:key];
+    [self.squiggles setValue:squiggle forKey:key];
     [squiggle release];	// we are done with squiggle so release it	 
   }	// end for
 }
@@ -161,7 +171,7 @@
     NSValue * touchValue = [NSValue valueWithPointer:touch];
     
     // fetch the squiggle this touch should be added to using the key
-    Squiggle *squiggle = [squiggles valueForKey:[NSString stringWithFormat:@"%@", touchValue]];
+    Squiggle *squiggle = [self.squiggles valueForKey:[NSString stringWithFormat:@"%@", touchValue]];
     
     // get the current and previous touch locations
     CGPoint current = [touch locationInView:self];
@@ -176,25 +186,24 @@
     higher.y = (previous.y < current.y ? current.y: previous.y);
     
     // redraw the screen in the required region
-    [self setNeedsDisplayInRect:CGRectMake(lower.x - lineWidth,
-                                           lower.y - lineWidth, higher.x - lower.x + lineWidth * 2, 
-                                           higher.y - lower.y + lineWidth * 2)];
+    [self setNeedsDisplayInRect:CGRectMake(lower.x - self.lineWidth,
+                                           lower.y - self.lineWidth, higher.x - lower.x + self.lineWidth * 2,
+                                           higher.y - lower.y + self.lineWidth * 2)];
   }	// end for
 }
 
 // clear the paintings in main view
 - (void)resetView {
-  [squiggles removeAllObjects];
-  [finishedSquiggles removeAllObjects];
+  [self.squiggles removeAllObjects];
+  [self.finishedSquiggles removeAllObjects];
   [self setNeedsDisplay];	// refresh the display
 }
 
 - (void)dealloc {
-  [squiggles release]; // release the squiggles NSMutableDictionary 
-  [finishedSquiggles release]; // release finishedSquiggles 
-  [color release]; // release the color UIColor 
+  self.squiggles = nil;
+  self.finishedSquiggles = nil;
+  self.color = nil;
   [super dealloc];
 }
-
 
 @end

@@ -104,7 +104,10 @@
     NSString *key = [NSString stringWithFormat:@"%@", touchValue];
     // retrieve the squiggle for this touch using the key
     Squiggle *squiggle = [self.squiggles valueForKey:key];
-    // remove the squiggle from the dictionary and place it in an array // of finished squiggles [finishedSquiggles addObject:squiggle]; // add to finishedSquiggles [squiggles removeObjectForKey:key]; // remove from squiggles
+    // remove the squiggle from the dictionary and place it in an array
+    // of finished squiggles [finishedSquiggles addObject:squiggle];
+    // add to finishedSquiggles [squiggles removeObjectForKey:key];
+    // remove from squiggles
     [self.finishedSquiggles addObject:squiggle]; // add to finishedSquiggles
     [self.squiggles removeObjectForKey:key]; // remove from squiggles
   }//endfor
@@ -129,7 +132,11 @@
   if (event.subtype == UIEventSubtypeMotionShake){
     // create an alert prompting the user about clearing the painting
     NSString *message = @"Are you sure you want to clear the painting?";
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Clear painting" message:message delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"clear", nil];
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Clear painting"
+                                                    message:message
+                                                   delegate:self
+                                          cancelButtonTitle:@"Cancel"
+                                          otherButtonTitles:@"Clear", nil];
     [alert show];
     [alert release];
   }// end if
